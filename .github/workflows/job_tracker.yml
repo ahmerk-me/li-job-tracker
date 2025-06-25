@@ -1,0 +1,61 @@
+name: LinkedIn Job Tracker
+
+on:
+  schedule:
+    # Run every 30 minutes
+    - cron: '*/30 * * * *'
+  workflow_dispatch:  # Allow manual runs
+
+jobs:
+  track-jobs:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: Create config file
+      run: |
+        cat > config.json << 'EOF'
+        {
+          "search_criteria": {
+            "keywords": ["python developer", "software engineer", "data scientist", "machine learning engineer"],
+            "location": "United States",
+            "experience_level": ["Entry level", "Associate"],
+            "job_type": ["Full-time"],
+            "remote": true
+          },
+          "email": {
+            "smtp_server": "smtp.gmail.com",
+            "smtp_port": 587,
+            "sender_email": "${{ secrets.SENDER_EMAIL }}",
+            "sender_password": "${{ secrets.SENDER_PASSWORD }}",
+            "recipient_email": "${{ secrets.RECIPIENT_EMAIL }}"
+          },
+          "monitoring": {
+            "check_interval_minutes": 30,
+            "max_jobs_per_notification": 10
+          }
+        }
+        EOF
+        
+    - name: Run job tracker
+      run: python linkedin_job_tracker.py
+      
+    - name: Commit and push if changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add seen_jobs.json job_tracker.log
+        git diff --quiet && git diff --staged --quiet || git commit -m "Update job tracking data"
+        git push 
