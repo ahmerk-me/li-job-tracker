@@ -1,0 +1,20 @@
+{
+  "search_criteria": {
+    "keywords": ["python developer", "software engineer", "data scientist", "machine learning engineer"],
+    "location": "United States",
+    "experience_level": ["Entry level", "Associate"],
+    "job_type": ["Full-time"],
+    "remote": true
+  },
+  "email": {
+    "smtp_server": "smtp.gmail.com",
+    "smtp_port": 587,
+    "sender_email": "your-email@gmail.com",
+    "sender_password": "your-app-password",
+    "recipient_email": "your-email@gmail.com"
+  },
+  "monitoring": {
+    "check_interval_minutes": 30,
+    "max_jobs_per_notification": 10
+  }
+} 
