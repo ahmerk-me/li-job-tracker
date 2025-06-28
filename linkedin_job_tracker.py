@@ -33,6 +33,8 @@ class LinkedInJobTracker:
         self.config = self.load_config(config_file)
         self.seen_jobs_file = 'seen_jobs.json'
         self.seen_jobs = self.load_seen_jobs()
+        self.last_run_file = 'last_run.json'
+        self.last_run_time = self.load_last_run_time()
         
         # Headers to mimic a real browser
         self.headers = {
@@ -86,6 +88,18 @@ class LinkedInJobTracker:
         """Save seen job IDs to file"""
         with open(self.seen_jobs_file, 'w') as f:
             json.dump(list(self.seen_jobs), f)
+    
+    def load_last_run_time(self):
+        if os.path.exists(self.last_run_file):
+            with open(self.last_run_file, 'r') as f:
+                return datetime.fromisoformat(json.load(f)['last_run'])
+        else:
+            # Default: 15 minutes ago
+            return datetime.now() - timedelta(minutes=15)
+
+    def save_last_run_time(self):
+        with open(self.last_run_file, 'w') as f:
+            json.dump({'last_run': datetime.now().isoformat()}, f)
     
     def build_search_url(self) -> str:
         """Build LinkedIn job search URL based on criteria"""
@@ -222,6 +236,22 @@ class LinkedInJobTracker:
         logging.info(f"Found {len(new_jobs)} new jobs")
         return new_jobs
     
+    def filter_jobs_by_time(self, jobs):
+        new_jobs = []
+        now = datetime.now()
+        for job in jobs:
+            # Parse job['posted_time'] to datetime
+            # LinkedIn may use ISO format or relative time (e.g., '5 minutes ago')
+            # You may need to parse accordingly
+            try:
+                posted_time = datetime.fromisoformat(job['posted_time'])
+            except Exception:
+                # Fallback: skip if can't parse
+                continue
+            if self.last_run_time < posted_time <= now:
+                new_jobs.append(job)
+        return new_jobs
+    
     def send_email_notification(self, jobs: List[Dict]):
         """Send email notification with new job listings"""
         if not jobs:
@@ -306,23 +336,23 @@ class LinkedInJobTracker:
     def run_once(self):
         """Run one iteration of job checking"""
         logging.info("Starting job search...")
-        
-        # Scrape jobs
         jobs = self.scrape_linkedin_jobs()
-        
         if not jobs:
             logging.warning("No jobs found or error occurred")
+            self.save_last_run_time()
             return
-        
-        # Filter new jobs
-        new_jobs = self.filter_new_jobs(jobs)
-        
-        # Send notification if new jobs found
+
+        # Filter by time window
+        jobs_in_window = self.filter_jobs_by_time(jobs)
+        # Filter new jobs (not seen before)
+        new_jobs = self.filter_new_jobs(jobs_in_window)
+
         if new_jobs:
             self.send_email_notification(new_jobs)
             self.save_seen_jobs()
         else:
-            logging.info("No new jobs found")
+            logging.info("No new jobs found in this time window")
+        self.save_last_run_time()
     
     def run_continuous(self):
         """Run the job tracker continuously"""
