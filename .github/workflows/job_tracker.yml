@@ -32,7 +32,7 @@ jobs:
             "keywords": ["android", "cloud"],
             "location": "Ireland",
             "experience_level": [],
-            "job_type": [],
+            "job_type": []
           },
           "email": {
             "smtp_server": "smtp.gmail.com",
