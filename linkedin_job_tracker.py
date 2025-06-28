@@ -94,8 +94,8 @@ class LinkedInJobTracker:
             with open(self.last_run_file, 'r') as f:
                 return datetime.fromisoformat(json.load(f)['last_run'])
         else:
-            # Default: 15 minutes ago
-            return datetime.now() - timedelta(minutes=15)
+            # Default: 30 minutes ago
+            return datetime.now() - timedelta(minutes=30)
 
     def save_last_run_time(self):
         with open(self.last_run_file, 'w') as f:
