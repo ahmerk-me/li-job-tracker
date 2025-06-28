@@ -51,10 +51,10 @@ jobs:
     - name: Run job tracker
       run: python linkedin_job_tracker.py
       
-    - name: Commit and push if changes
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add seen_jobs.json job_tracker.log
-        git diff --quiet && git diff --staged --quiet || git commit -m "Update job tracking data"
-        git push 
+    # - name: Commit and push if changes
+    #   run: |
+    #     git config --local user.email "action@github.com"
+    #     git config --local user.name "GitHub Action"
+    #     git add seen_jobs.json job_tracker.log
+    #     git diff --quiet && git diff --staged --quiet || git commit -m "Update job tracking data"
+    #     git push 
