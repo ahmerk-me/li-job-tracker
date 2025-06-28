@@ -53,12 +53,11 @@ class LinkedInJobTracker:
             # Create default config
             default_config = {
                 "search_criteria": {
-                    "keywords": ["python developer", "software engineer", "data scientist"],
-                    "location": "United States",
-                    "experience_level": ["Entry level", "Associate"],
-                    "job_type": ["Full-time"],
-                    "remote": True
-                },
+            "keywords": ["android", "cloud"],
+            "location": "Ireland",
+            "experience_level": [],
+            "job_type": []
+          },
                 "email": {
                     "smtp_server": "smtp.gmail.com",
                     "smtp_port": 587,

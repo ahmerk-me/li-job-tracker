@@ -1,11 +1,10 @@
 {
   "search_criteria": {
-    "keywords": ["python developer", "software engineer", "data scientist", "machine learning engineer"],
-    "location": "United States",
-    "experience_level": ["Entry level", "Associate"],
-    "job_type": ["Full-time"],
-    "remote": true
-  },
+            "keywords": ["android", "cloud"],
+            "location": "Ireland",
+            "experience_level": [],
+            "job_type": []
+          },
   "email": {
     "smtp_server": "smtp.gmail.com",
     "smtp_port": 587,
